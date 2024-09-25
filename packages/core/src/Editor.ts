@@ -368,12 +368,14 @@ export class Editor extends EventEmitter<EditorEvents> {
     this.createNodeViews()
     this.prependClass()
 
-    // Let’s store the editor instance in the DOM element.
-    // So we’ll have access to it for tests.
-    // @ts-ignore
-    const dom = this.view.dom as TiptapEditorHTMLElement
+    if (typeof window !== 'undefined' && window.Cypress) {
+      // Let’s store the editor instance in the DOM element.
+      // So we’ll have access to it for tests.
+      // @ts-ignore
+      const dom = this.view.dom as TiptapEditorHTMLElement
 
-    dom.editor = this
+      dom.editor = this
+    }
   }
 
   /**
@@ -568,13 +570,6 @@ export class Editor extends EventEmitter<EditorEvents> {
     this.emit('destroy')
 
     if (this.view) {
-      // Cleanup our test reference to prevent memory leaks
-      // @ts-ignore
-      const dom = this.view.dom as TiptapEditorHTMLElement
-      if (dom && dom.editor) {
-        delete dom.editor;
-      }
-
       this.view.destroy()
     }
 
